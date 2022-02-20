@@ -1,7 +1,7 @@
 # KotlinCurve
 General Graphics Curve(s) exercise(s)
 
-1st exercise: Canvas.Path.cubicTo() February 20, 2020 
+1st exercise: Canvas.Path.cubicTo() February 20, 2020 \
 <img width="250" src="https://user-images.githubusercontent.com/1282659/154866241-426a5906-507e-429b-b691-cd6ba3f33d53.jpg">
 
 # References
