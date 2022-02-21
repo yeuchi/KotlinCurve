@@ -3,6 +3,7 @@ package com.ctyeung.kotlincurve
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import com.ctyeung.kotlincurve.data.Median
 import com.ctyeung.kotlincurve.databinding.ActivityMainBinding
 import java.util.ArrayList
 
@@ -10,10 +11,10 @@ class MainActivity : AppCompatActivity(), PaperEvent {
 
     lateinit var mBinding: ActivityMainBinding
     lateinit var mPaper:MyPaperView
+    val linearSpline = LinearSpline()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         mBinding.listener = this
@@ -32,13 +33,24 @@ class MainActivity : AppCompatActivity(), PaperEvent {
         mPaper.clear()
     }
 
-    val linearSpline = LinearSpline()
+    fun onCheckMedian() {
+        render()
+    }
+
 
     override fun onActionUp(point:MyPoint) {
-
         linearSpline.insert(point)
-        mPaper.setKnots(linearSpline.knots)
+        render()
+    }
 
-        // control what is drawn here
+    private fun render() {
+        val isMedianChecked = mBinding.chkMedian.isChecked
+        if(isMedianChecked) {
+            val filtered = Median.filter(linearSpline.knots)
+            mPaper.setKnots(filtered)
+        }
+        else {
+            mPaper.setKnots(linearSpline.knots)
+        }
     }
 }
