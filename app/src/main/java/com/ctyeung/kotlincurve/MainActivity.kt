@@ -63,14 +63,14 @@ class MainActivity : AppCompatActivity(), PaperEvent {
 
     private fun render() {
         val isMedianChecked = mBinding.chkMedian.isChecked
-//        val isSplineChecked = mBinding.chkSpline.isChecked
-//        val listPoints = if (isSplineChecked) {
-//            cubicSpline.formulate()
-//            cubicSpline.getPoints()
-//        }
-//        else {
-        val listPoints =linearSpline.knots
-//        }
+        val isSplineChecked = mBinding.chkSpline.isChecked
+        val listPoints = if (isSplineChecked) {
+            cubicSpline.formulate()
+            cubicSpline.getPoints()
+        }
+        else {
+            linearSpline.knots
+        }
 
         if(isMedianChecked) {
             val filtered = Median.filter(listPoints)

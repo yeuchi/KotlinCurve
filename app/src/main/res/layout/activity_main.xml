@@ -44,12 +44,12 @@
                 android:onCheckedChanged="@{() -> listener.onCheckMedian()}"
                 android:text="median"/>
 
-<!--            <CheckBox-->
-<!--                android:id="@+id/chk_spline"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:onCheckedChanged="@{() -> listener.onCheckCubicSpline()}"-->
-<!--                android:text="cubic spline"/>-->
+            <CheckBox
+                android:id="@+id/chk_spline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onCheckedChanged="@{() -> listener.onCheckCubicSpline()}"
+                android:text="cubic spline"/>
 
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

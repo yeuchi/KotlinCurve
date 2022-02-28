@@ -30,17 +30,17 @@ class CubicSpline {
      * TODO implement standard cubic spline
      */
 
-    val arraySrcX = ArrayList<Float>()
-    val arraySrcY = ArrayList<Float>()
+    private val arraySrcX = ArrayList<Double>()
+    private val arraySrcY = ArrayList<Double>()
 
-    var arrayB: DoubleArray? = null
-    var arrayC: DoubleArray? = null
-    var arrayD: DoubleArray? = null
-    var arrayH: DoubleArray? = null
-    var arraySIG: DoubleArray? = null
-    var arrayL: DoubleArray? = null
-    var arrayU: DoubleArray? = null
-    var arrayZ: DoubleArray? = null
+    private var arrayB: DoubleArray? = null
+    private var arrayC: DoubleArray? = null
+    private var arrayD: DoubleArray? = null
+    private var arrayH: DoubleArray? = null
+    private var arraySIG: DoubleArray? = null
+    private var arrayL: DoubleArray? = null
+    private var arrayU: DoubleArray? = null
+    private var arrayZ: DoubleArray? = null
 
     fun clear() {
         arraySrcX.clear()
@@ -67,49 +67,29 @@ class CubicSpline {
         arrayZ = DoubleArray(size)
     }
 
-    fun hasKnots(): Boolean {
-        return arraySrcX.size > 0
-    }
-
-    fun getNumKnots(): Int {
+    private fun getNumKnots(): Int {
         return arraySrcX.size
-    }
-
-    fun getMinX(): Float? {
-        if (arraySrcX.size == 0)
-            return null
-        else
-            return arraySrcX[0]
-    }
-
-    fun getMaxX(): Float? {
-        if (arraySrcX.size == 0)
-            return null
-        else {
-            val last = arraySrcX.size - 1
-            return arraySrcX[last]
-        }
     }
 
     fun insert(p: MyPoint) {
         when (getNumKnots()) {
             0 -> {
-                arraySrcX.add(p.x.toFloat())
-                arraySrcY.add(p.y.toFloat())
+                arraySrcX.add(p.x)
+                arraySrcY.add(p.y)
             }
             1 -> {
                 if (p.x < arraySrcX[0]) {
-                    arraySrcX.add(0, p.x.toFloat())
-                    arraySrcY.add(0, p.y.toFloat())
+                    arraySrcX.add(0, p.x)
+                    arraySrcY.add(0, p.y)
                 } else {
-                    arraySrcX.add(p.x.toFloat())
-                    arraySrcY.add(p.y.toFloat())
+                    arraySrcX.add(p.x)
+                    arraySrcY.add(p.y)
                 }
             }
             else -> {
-                val index = bisection(p.x.toFloat()) + 1
-                arraySrcX.add(index, p.x.toFloat())
-                arraySrcY.add(index, p.y.toFloat())
+                val index = bisection(p.x) + 1
+                arraySrcX.add(index, p.x)
+                arraySrcY.add(index, p.y)
             }
         }
     }
@@ -118,7 +98,7 @@ class CubicSpline {
      * bisection search to locate x-axis values for input
      * - intended as a private method
      */
-    fun bisection(ab: Float): Int {                                               // x-axis value
+    private fun bisection(ab: Double): Int {                                               // x-axis value
         var ju = arraySrcX.size                                                // upper limit
         var jl = 0                                                                // lower limit
         var jm: Int?                                                            // midpoint
@@ -148,7 +128,7 @@ class CubicSpline {
         for (aa in 0 until numKnots - 1) {
             arrayH?.set(
                 aa,
-                (arraySrcX.get(aa + 1) - arraySrcX.get(aa)).toDouble()
+                (arraySrcX[aa + 1] - arraySrcX[aa])
             ) // [A], Hj = Xj+1 - Xj
         }
 
@@ -171,7 +151,7 @@ class CubicSpline {
         for (aa in 1 until numKnots - 1) {
             arrayL?.set(
                 aa,
-                (2.0 * (arraySrcX.get(aa + 1) - arraySrcX.get(aa - 1)) - arrayH!!.get(aa - 1) * arrayH!!.get(
+                (2.0 * (arraySrcX.get(aa + 1) - arraySrcX.get(aa - 1)))- (arrayH!!.get(aa - 1) * arrayU!!.get(
                     aa - 1
                 ))
             )
@@ -180,8 +160,7 @@ class CubicSpline {
 
             arrayZ?.set(
                 aa,
-                (arraySIG!!.get(aa) - arrayH!!.get(aa - 1) * arrayZ!!.get(aa - 1)) / arrayL!!.get(aa)
-            )
+                (arraySIG!!.get(aa) - (arrayH!!.get(aa - 1) * arrayZ!!.get(aa - 1))) / arrayL!!.get(aa))
         }
 
         // STEP 5		TAIL BOUNDARY @ 0
@@ -197,13 +176,13 @@ class CubicSpline {
             ) // Theorem 3.11
 
             arrayB?.set(
-                aa, ((arraySrcY.get(aa + 1) - arraySrcY.get(aa)) / arrayH!!.get(aa)
-                        - arrayH!!.get(aa) * (arrayC!!.get(aa + 1) + 2 * arrayC!!.get(aa)) / 3)
+                aa, ((arraySrcY[aa + 1] - arraySrcY[aa]) / arrayH!!.get(aa)
+                        - (arrayH!!.get(aa) * (arrayC!!.get(aa + 1) + 2 * arrayC!!.get(aa)) / 3.0))
             ) // eq. 10
 
             arrayD?.set(
                 aa,
-                (arrayC!!.get(aa + 1) - arrayC!!.get(aa)) / (3 * arrayH!!.get(aa))
+                (arrayC!!.get(aa + 1) - arrayC!!.get(aa)) / (3.0 * arrayH!!.get(aa))
             ) // eq. 11
         }
     }
@@ -215,22 +194,22 @@ class CubicSpline {
     * RETURN: -1 if invalid, positive value if ok.
     */
     fun doCubicSpline(
-        x: Float,                // [in] x value
+        x: Double,                // [in] x value
         i: Int
     ): Double {            // [in] index of anchor to use
         val Y = arraySrcY[i] +
                 arrayB?.get(i)!! * (x - arraySrcX[i]) +
-                arrayC?.get(i)!! * Math.pow((x - arraySrcX[i]).toDouble(), 2.0) +
-                arrayD?.get(i)!! * Math.pow((x - arraySrcX[i]).toDouble(), 3.0)
+                arrayC?.get(i)!! * Math.pow((x - arraySrcX[i]), 2.0) +
+                arrayD?.get(i)!! * Math.pow((x - arraySrcX[i]), 3.0)
         return Y
     }
 
-    fun interpolateY(x: Float): Float {
+    fun interpolateY(x: Double): Double {
         val index = bisection(x)
         return if (arraySrcX[index] == x) {
             arraySrcY[index]
         } else {
-            doCubicSpline(x, index).toFloat()
+            doCubicSpline(x, index)
         }
     }
 
@@ -242,10 +221,10 @@ class CubicSpline {
         val numKnots = getNumKnots()
         return when (numKnots) {
             0 -> arrayListOf()
-            1 -> arrayListOf<MyPoint>(MyPoint(arraySrcX[0].toDouble(), arraySrcY[0].toDouble()))
+            1 -> arrayListOf<MyPoint>(MyPoint(arraySrcX[0], arraySrcY[0]))
             2 -> arrayListOf<MyPoint>(
-                MyPoint(arraySrcX[0].toDouble(), arraySrcY[0].toDouble()),
-                MyPoint(arraySrcX[1].toDouble(), arraySrcY[1].toDouble())
+                MyPoint(arraySrcX[0], arraySrcY[0]),
+                MyPoint(arraySrcX[1], arraySrcY[1])
             )
             else -> interpolateAll()
         }
@@ -256,8 +235,8 @@ class CubicSpline {
         val start = arraySrcX[0].toInt() + 1
         val end = arraySrcX.get(getNumKnots() - 1).toInt() - 1
         for (i in start..end) {
-            val y = interpolateY(i.toFloat())
-            listPoints.add(MyPoint(i.toDouble(), y.toDouble()))
+            val y = interpolateY(i.toDouble())
+            listPoints.add(MyPoint(i.toDouble(), y))
         }
         return listPoints
     }
