@@ -11,14 +11,12 @@ Control points are blue in diagram. <sup>[1]</sup> \
 
 ### De-noising
 2nd exercise; Median Filter February 20, 2020 \
-
 Statistical median is a simple and effect filter for removing impulse (aka. Salt & Pepper) noise from signal.
 <img width="250" src="https://user-images.githubusercontent.com/1282659/154873489-6306bcc9-8a1e-4f30-bace-8908abba16b0.jpg"> <img width="250" src="https://user-images.githubusercontent.com/1282659/154873495-31097bd2-d1a5-4846-bde6-4d4c7004422e.jpg">
 
 ### Cubic Spline
 3rd exercise; Cubic spline interpolation February 27, 2020 \
-
-Spline a popular curve smoothing alogrithm,<sup>[4]</sup>
+Spline a popular curve smoothing alogrithm,<sup>[4]</sup> \
 <img width="250" src="https://user-images.githubusercontent.com/1282659/155912511-7d978824-f632-4003-af23-32062506d40c.jpg"> <img width="250" src="https://user-images.githubusercontent.com/1282659/155912512-f04bf8ab-e411-40e6-a5a1-fd0bec78b523.jpg">
 
 # References
