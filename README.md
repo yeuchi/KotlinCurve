@@ -1,5 +1,10 @@
 # KotlinCurve
-General Graphics Curve(s) exercise(s)
+This is an exercise of the following.
+- Canvas Path cubic
+- Cubic Spline algorithm
+- Bisection search
+- Median filter for de-noising
+- ComposeUI & xml Layout
 
 ### Smoothing
 1st exercise: Canvas.Path.cubicTo() February 20, 2020 \
