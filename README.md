@@ -31,3 +31,5 @@ Spline a popular curve smoothing alogrithm,<sup>[4]</sup> \
    https://developer.android.com/reference/android/graphics/Path#cubicTo(float,%20float,%20float,%20float,%20float,%20float)
 
 4. Numerical Recipes in C 2nd Edition by Press, Vetterling, Teukolsky, Flannery
+
+<video src="https://github.com/yeuchi/KotlinCurve/assets/1282659/c98bf488-661d-4768-9e73-0e0b1e422f47"/>
