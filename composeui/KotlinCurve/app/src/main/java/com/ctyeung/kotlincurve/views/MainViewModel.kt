@@ -26,7 +26,7 @@ open class MainViewModel @Inject constructor() : ViewModel() {
             return cubicSpline.getPoints()
         }
 
-    val linearSplinePoints:List<PointF>
+    val linearSplineKnots:List<PointF>
         get() {
             return linearSpline.knots
         }
