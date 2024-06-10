@@ -25,9 +25,11 @@ Spline a popular curve smoothing alogrithm,<sup>[4]</sup> \
 <img width="420" alt="Screen Shot 2024-05-29 at 5 20 54 PM" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/210c4db7-1b9b-4313-9fa2-07d8481ee9bc">
 
 ### Android Studio
-Iguana 2023.2.1 Patch 2 April 3, 2024
-
+Iguana 2023.2.1 Patch 2 April 3, 2024\
 <img width="500" src="https://github.com/yeuchi/LinearRegression/assets/1282659/4faf30c4-4425-4201-846b-b5bd32c9fc42"/>
+
+### Test Device
+Google Pixel6a 
 
 # References
 
