@@ -4,6 +4,7 @@ import android.graphics.PointF
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.ctyeung.kotlincurve.data.BezierQuad
 import com.ctyeung.kotlincurve.data.CubicSpline
 import com.ctyeung.kotlincurve.data.LinearSpline
 import com.ctyeung.kotlincurve.data.Median
@@ -16,8 +17,9 @@ class MainActivity : AppCompatActivity(), PaperEvent
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var mPaper: MyPaperView
 
-    val linearSpline = LinearSpline()
-    val cubicSpline = CubicSpline()
+    private val linearSpline = LinearSpline()
+    private val cubicSpline = CubicSpline()
+    private val bezierQuad = BezierQuad()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +53,7 @@ class MainActivity : AppCompatActivity(), PaperEvent
     override fun onActionUp(point:PointF) {
         linearSpline.insert(point)
         cubicSpline.insert(point)
+        bezierQuad.insert(point)
         render()
     }
 
