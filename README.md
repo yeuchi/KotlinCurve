@@ -1,6 +1,7 @@
 # KotlinCurve
 This is an exercise of the following.
-- Canvas Path cubic
+- Bezier Quadratic
+- Bezier Cubic (default Canvas feaure)
 - Cubic Spline algorithm
 - Bisection search
 - Median filter for de-noising
@@ -51,4 +52,3 @@ Google Pixel6a
 6. Math - Quadratic Bézier Curve: Calculate Points, StackOverflow, Sep 13, 2016 \
    https://stackoverflow.com/questions/5634460/quadratic-b%C3%A9zier-curve-calculate-points
 
-<video src="https://github.com/yeuchi/KotlinCurve/assets/1282659/c98bf488-661d-4768-9e73-0e0b1e422f47"/>
