@@ -14,33 +14,63 @@
             android:id="@+id/paper"
             android:background="@color/colorWhite" />
 
-        <CheckBox
-            android:id="@+id/chk_median"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="median"
-            app:layout_constraintBottom_toTopOf="@+id/chk_spline"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-
-        <CheckBox
-            android:id="@+id/chk_spline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="cubic spline"
+            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/btnDeleteLine"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent">
 
-        <CheckBox
-            android:id="@+id/chk_bezierQuad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="Bezier Quadratic"
-            app:layout_constraintBottom_toTopOf="@+id/chk_spline"
-            app:layout_constraintStart_toStartOf="parent"/>
+            <RadioButton android:id="@+id/rdo_cubic_spline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Cubic Spline"/>
+            <RadioButton android:id="@+id/rdo_linear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Linear"/>
+            <RadioButton android:id="@+id/rdo_median"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Linear (Median Filter)"/>
+            <RadioButton android:id="@+id/rdo_bezier_quad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bezier Quad"/>
+            <RadioButton android:id="@+id/rdo_bezier_cubic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bezier Cubic"/>
+        </RadioGroup>
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/chk_median"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="10dp"-->
+<!--            android:text="median"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/chk_spline"-->
+<!--            app:layout_constraintStart_toStartOf="parent"/>-->
+
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/chk_spline"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="15dp"-->
+<!--            android:text="cubic spline"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/btnDeleteLine"-->
+<!--            app:layout_constraintStart_toStartOf="parent"/>-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/chk_bezierQuad"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="15dp"-->
+<!--            android:text="Bezier Quadratic"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/chk_spline"-->
+<!--            app:layout_constraintStart_toStartOf="parent"/>-->
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnDeleteLine"

@@ -86,6 +86,9 @@ class BezierQuad {
         return y
     }
 
+    /*
+     * TODO need fix to handle 4 or more points
+     */
     private fun interpolateAll(): ArrayList<PointF> {
         val listPoints = ArrayList<PointF>()
         val start = knots[0].x.toInt() + 1

@@ -9,6 +9,9 @@ import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.ctyeung.kotlincurve.data.BezierQuad
+import com.ctyeung.kotlincurve.data.CubicSpline
+import com.ctyeung.kotlincurve.data.Median
 
 class MyPaperView(
     context: Context,
@@ -20,52 +23,73 @@ class MyPaperView(
     private val bezierColor = Color.CYAN
 
     // defines paint and canvas
-    private var path: Path? = null
-    private var _knots: List<PointF>? = null
-    private var mListener: PaperEvent? = null
+    private var _knots = arrayListOf<PointF>()
 
-
-    fun setKnots(knots: List<PointF>) {
-        _knots = knots
-        invalidate()
-    }
+    private val cubicSpline = CubicSpline()
+    private val bezierQuad = BezierQuad()
+    var interpolation = InterpolationEnum.CubicSpline
 
     init {
         isFocusable = true
         isFocusableInTouchMode = true
-        path = Path()
-    }
-
-    fun setListener(listener: PaperEvent) {
-        mListener = listener
     }
 
     override fun onDraw(canvas: Canvas) {
         drawKnots(canvas)
-        drawLine(canvas)
-        drawCubic(canvas)
+
+        when (interpolation) {
+            InterpolationEnum.MedianFilter -> {
+                val filtered = Median.filter(_knots)
+                drawLine(canvas, filtered)
+            }
+
+            InterpolationEnum.Linear -> drawLine(canvas, _knots)
+
+            InterpolationEnum.CubicSpline -> {
+                cubicSpline.let { spline ->
+                    spline.clear()
+                    _knots.forEach {
+                        spline.insert(it)
+                    }
+                    spline.formulate()
+                    val points = spline.getPoints()
+                    drawLine(canvas, points)
+                }
+            }
+
+            InterpolationEnum.BezierQuad -> {
+                bezierQuad.let { bezier ->
+                    bezier.clear()
+
+                    _knots.forEach {
+                        bezier.insert(it)
+                    }
+                    val points = bezier.getPoints()
+                    drawLine(canvas, points)
+                }
+            }
+
+            InterpolationEnum.BezierCubic -> drawCubic(canvas)
+        }
     }
 
-    /*
-     * Draw touch points
+    /**
+     * Draw Circle for touch points
      */
     private fun drawKnots(canvas: Canvas) {
         Paint().let { paint ->
             paint.style = Paint.Style.FILL
             paint.color = dotColor
-            _knots?.apply {
-                for (p in _knots!!) {
+            _knots.apply {
+                for (p in _knots) {
                     // highlight point
-                    canvas.drawCircle(p.x, p.y, 5f, paint)
+                    canvas.drawCircle(p.x, p.y, 15f, paint)
                 }
             }
         }
     }
 
-    /*
-     * Draw tangent lines
-     */
-    private fun drawLine(canvas: Canvas) {
+    private fun drawLine(canvas: Canvas, points: List<PointF>) {
         Paint().let { paint ->
             paint.isAntiAlias = true
             paint.strokeWidth = 3f
@@ -74,16 +98,14 @@ class MyPaperView(
             paint.strokeCap = Paint.Cap.ROUND
             paint.color = lineColor
 
-            val size = _knots?.size ?: 0
+            val size = points.size
             if (size > 1) {
                 val path = Path()
                 for (i in 0..size - 2) {
-                    val p = _knots?.get(i)
-                    val pp = _knots?.get(i + 1)
-                    if (p != null && pp != null) {
-                        path.moveTo(p.x, p.y)
-                        path.lineTo(pp.x, pp.y)
-                    }
+                    val p = points[i]
+                    val pp = points[i + 1]
+                    path.moveTo(p.x, p.y)
+                    path.lineTo(pp.x, pp.y)
                 }
                 canvas.drawPath(path, paint)
             }
@@ -103,37 +125,36 @@ class MyPaperView(
             paint.color = bezierColor
             paint.textSize = 65f
 
-            val size = _knots?.size ?: 0
+            val size = _knots.size
             if (size > 2) {
                 val path = Path()
                 val conPoint1 = ArrayList<PointF>()
                 val conPoint2 = ArrayList<PointF>()
                 for (i in 1 until size) {
-                    val prev = _knots?.get(i - 1)
-                    val p = _knots?.get(i)
-                    if (p != null && prev != null) {
-                        conPoint1.add(PointF((p.x + prev.x) / 2, prev.y))
-                        conPoint2.add(PointF((p.x + prev.x) / 2, p.y))
-                    }
+                    val prev = _knots[i - 1]
+                    val p = _knots[i]
+                    conPoint1.add(PointF((p.x + prev.x) / 2, prev.y))
+                    conPoint2.add(PointF((p.x + prev.x) / 2, p.y))
                 }
-                val first = _knots?.get(0)
-                first?.apply {
+                val first = _knots[0]
+                first.apply {
                     path.reset()
                     path.moveTo(first.x, first.y)
 
                     for (i in 1..<size) {
-                        val p = _knots?.get(i)
-                        if (p != null) {
-                            path.cubicTo(
-                                conPoint1[i - 1].x, conPoint1[i - 1].y,
-                                conPoint2[i - 1].x, conPoint2[i - 1].y,
-                                p.x, p.y
-                            )
-                        }
+                        val p = _knots[i]
+                        path.cubicTo(
+                            conPoint1[i - 1].x, conPoint1[i - 1].y,
+                            conPoint2[i - 1].x, conPoint2[i - 1].y,
+                            p.x, p.y
+                        )
                     }
                     canvas.drawPath(path, paint)
                     // canvas.drawTextOnPath("Over the hill; The best of both worlds; You can’t judge a book by its cover; ", path, 1F, -10F, paint)
                 }
+            }
+            else {
+                drawLine(canvas, _knots)
             }
         }
     }
@@ -145,11 +166,13 @@ class MyPaperView(
     }
 
     fun clear() {
-        _knots = null
-        path = Path()
+        _knots.clear()
         postInvalidate() // Indicate view should be redrawn
     }
 
+    /**
+     * Touch Event
+     */
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val point = PointF(event.x, event.y)
 
@@ -163,7 +186,9 @@ class MyPaperView(
                 break;*/
 
             MotionEvent.ACTION_UP -> {
-                mListener!!.onActionUp(point)
+                _knots.add(point)
+                _knots.sortBy { it.x }
+                invalidate()
             }
 
             else -> return false
@@ -171,4 +196,12 @@ class MyPaperView(
 
         return true
     }
+}
+
+enum class InterpolationEnum {
+    MedianFilter,
+    Linear,
+    BezierQuad,
+    BezierCubic,
+    CubicSpline
 }
