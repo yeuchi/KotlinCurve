@@ -14,7 +14,7 @@ Curve by calculating tangent from each point on curve. \
 Control points are blue in diagram. <sup>[1]</sup> \
 <img width="250" src="https://user-images.githubusercontent.com/1282659/154866555-d2af3d03-322e-4343-89ea-3a693e4ff14e.png"> 
 
-### De-noising
+### De-noising (Median)
 2nd exercise; Median Filter February 20, 2020 \
 Statistical median is a simple and effective filter for removing impulse (aka. Salt & Pepper) noise from signal.
 <img width="420" alt="Screen Shot 2024-05-29 at 5 20 39 PM" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/0d9a8a51-9c60-4dc5-a896-4da28d9f7b17">
@@ -47,5 +47,8 @@ Google Pixel6a
    https://developer.android.com/reference/android/graphics/Path#cubicTo(float,%20float,%20float,%20float,%20float,%20float)
 
 4. Numerical Recipes in C 2nd Edition by Press, Vetterling, Teukolsky, Flannery
+   
+6. Math - Quadratic Bézier Curve: Calculate Points, StackOverflow, Sep 13, 2016 \
+   https://stackoverflow.com/questions/5634460/quadratic-b%C3%A9zier-curve-calculate-points
 
 <video src="https://github.com/yeuchi/KotlinCurve/assets/1282659/c98bf488-661d-4768-9e73-0e0b1e422f47"/>
