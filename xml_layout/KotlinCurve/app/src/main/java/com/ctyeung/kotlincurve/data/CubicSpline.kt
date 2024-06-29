@@ -28,7 +28,6 @@ import android.graphics.PointF
 // 12Nov17      upgrade to ECMAScript6                                      cty
 // ============================================================================
 class CubicSpline : BasePoints() {
-
     private var arrayB: FloatArray? = null
     private var arrayC: FloatArray? = null
     private var arrayD: FloatArray? = null
@@ -84,8 +83,8 @@ class CubicSpline : BasePoints() {
         for (aa in 1 until numKnots - 1) {
             // 0 -> n-1
             arraySIG?.set(
-                aa, (3F / arrayH!![aa] * (knots[aa + 1].x - knots[aa].x) -
-                        3F / arrayH!![aa - 1] * (knots[aa].y - knots[aa - 1].y))
+                aa, (3F / arrayH!!.get(aa) * (knots.get(aa + 1).y - knots.get(aa).y) -
+                        3F / arrayH!!.get(aa - 1) * (knots.get(aa).y - knots.get(aa - 1).y))
             )
         }
 
@@ -99,15 +98,16 @@ class CubicSpline : BasePoints() {
         for (aa in 1 until numKnots - 1) {
             arrayL?.set(
                 aa,
-                (2F * (knots[aa + 1].x - knots[aa - 1].x))- (arrayH!![aa - 1] * arrayU!![aa - 1])
+                (2F * (knots.get(aa + 1).x - knots.get(aa - 1).x))- (arrayH!!.get(aa - 1) * arrayU!!.get(
+                    aa - 1
+                ))
             )
 
-            arrayU?.set(aa, arrayH!![aa] / arrayL!![aa])
+            arrayU?.set(aa, arrayH!!.get(aa) / arrayL!!.get(aa))
 
             arrayZ?.set(
                 aa,
-                (arraySIG!![aa] - (arrayH!![aa - 1] * arrayZ!![aa - 1])) / arrayL!![aa]
-            )
+                (arraySIG!!.get(aa) - (arrayH!!.get(aa - 1) * arrayZ!!.get(aa - 1))) / arrayL!!.get(aa))
         }
 
         // STEP 5		TAIL BOUNDARY @ 0
@@ -119,17 +119,17 @@ class CubicSpline : BasePoints() {
         for (aa in numKnots - 2 downTo 0) {
             arrayC?.set(
                 aa,
-                arrayZ!![aa] - arrayU!![aa] * arrayC!![aa + 1]
+                arrayZ!!.get(aa) - arrayU!!.get(aa) * arrayC!!.get(aa + 1)
             ) // Theorem 3.11
 
             arrayB?.set(
-                aa, ((knots[aa + 1].y - knots[aa].y) / arrayH!![aa]
-                        - (arrayH!![aa] * (arrayC!![aa + 1] + 2 * arrayC!![aa]) / 3F))
+                aa, ((knots[aa + 1].y - knots[aa].y) / arrayH!!.get(aa)
+                        - (arrayH!!.get(aa) * (arrayC!!.get(aa + 1) + 2 * arrayC!!.get(aa)) / 3F))
             ) // eq. 10
 
             arrayD?.set(
                 aa,
-                (arrayC!![aa + 1] - arrayC!![aa]) / (3F * arrayH!![aa])
+                (arrayC!!.get(aa + 1) - arrayC!!.get(aa)) / (3F * arrayH!!.get(aa))
             ) // eq. 11
         }
     }
@@ -137,10 +137,10 @@ class CubicSpline : BasePoints() {
     /*
     * calculate the y value
     * - intended to be a private method
-    * WARNING: must have invoked formulate() before 
+    * WARNING: must have invoked formulate() before
     * RETURN: -1 if invalid, positive value if ok.
     */
-    private fun doCubicSpline(
+    fun doCubicSpline(
         x: Float,                // [in] x value
         i: Int
     ): Float {            // [in] index of anchor to use
@@ -151,7 +151,7 @@ class CubicSpline : BasePoints() {
         return Y.toFloat()
     }
 
-    private fun interpolateY(x: Float): Float {
+    fun interpolateY(x: Float): Float {
         val index = bisection(x)
         return if (knots[index].x == x) {
             knots[index].y
@@ -177,13 +177,10 @@ class CubicSpline : BasePoints() {
         }
     }
 
-    /**
-     * Assumption: 3 or more points
-     */
     private fun interpolateAll(): ArrayList<PointF> {
         val listPoints = ArrayList<PointF>()
         val start = knots[0].x.toInt() + 1
-        val end = knots[getNumKnots() - 1].x.toInt() - 1
+        val end = knots.get(getNumKnots() - 1).x.toInt() - 1
         for (i in start..end) {
             val y = interpolateY(i.toFloat())
             listPoints.add(PointF(i.toFloat(), y))
