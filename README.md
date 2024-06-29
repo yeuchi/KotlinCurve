@@ -27,7 +27,7 @@ Spline a popular curve smoothing alogrithm,<sup>[4]</sup> \
 
 ### Bezier Quadratic
 Compose of 3 points with start and end anchoring knots; center is a control point. \
-<img width="420" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/aac78f28-aa0e-42b8-a47a-812ac19fac26".
+<img width="420" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/aac78f28-aa0e-42b8-a47a-812ac19fac26">
 
 ### Bonus: text on curve
 So cool that Android SDK provides this feature right out of the box. \
