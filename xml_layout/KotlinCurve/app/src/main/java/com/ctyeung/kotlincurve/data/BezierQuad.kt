@@ -1,58 +1,11 @@
 package com.ctyeung.kotlincurve.data
 
 import android.graphics.PointF
-import android.util.Log
 
-class BezierQuad {
+class BezierQuad :BasePoints() {
 
-    private var knots = arrayListOf<PointF>()
     fun clear() {
         knots.clear()
-    }
-
-    private fun getNumKnots(): Int {
-        return knots.size
-    }
-
-    fun insert(p: PointF) {
-        when (getNumKnots()) {
-            0 -> {
-                knots.add(p)
-            }
-
-            1 -> {
-                if (p.x < knots[0].x) {
-                    knots.add(0, p)
-                } else {
-                    knots.add(p)
-                }
-            }
-
-            else -> {
-                val index = bisection(p.x) + 1
-                knots.add(index, p)
-            }
-        }
-    }
-
-    /*
- * bisection search to locate x-axis values for input
- * - intended as a private method
- */
-    private fun bisection(ab: Float): Int {                                               // x-axis value
-        var ju = knots.size                                                // upper limit
-        var jl = 0                                                                // lower limit
-        var jm: Int?                                                            // midpoint
-
-        while (ju - jl > 1) {
-            jm = (ju + jl) / 2                                    // midpoint formula
-
-            if (ab > knots[jm].x)
-                jl = jm
-            else
-                ju = jm
-        }
-        return jl
     }
 
     private fun requant(i: Int): Int {
@@ -78,23 +31,32 @@ class BezierQuad {
      * Assumption: 3 or more points
      */
     private fun interpolateAll(): ArrayList<PointF> {
-        val listPoints = arrayListOf(knots[0])
-        val start = knots[0].x.toInt() + 1
-        val end = knots.last().x.toInt() - 1
-
-        /* calculate all points */
-        for (i in start..end) {
-
-            /* find nearest knot */
-            val index = requant(bisection(i.toFloat()))
-            val p0 = knots[index - 1]
-
-            /* calculate control point or skip this if it is control point, not knot */
-            val p1 = calculateControlPoint(index)
-            val p2 = knots[index + 1]
-
-            val y = doBezier(i.toFloat(), p0, p1, p2)
-            listPoints.add(PointF(i.toFloat(), y))
+        val listPoints = arrayListOf<PointF>()
+//        val start = knots[0].x.toInt() + 1
+//        val end = knots.last().x.toInt() - 1
+//
+//        /* calculate all points */
+//        for (i in start..end) {
+//
+//            /* find nearest knot */
+//            val index = requant(bisection(i.toFloat()))
+//            val p0 = knots[index - 1]
+//
+//            /* calculate control point or skip this if it is control point, not knot */
+//            val p1 = calculateControlPoint(index)
+//            val p2 = knots[index + 1]
+//
+//            val y = doBezier(i.toFloat(), p0, p1, p2)
+//            listPoints.add(PointF(i.toFloat(), y))
+//        }
+        for(i in 1 .. knots.size-2 step 2) {
+            val p0 = knots[i-1]
+            val p1 = knots[i]
+            val p2 = knots[i+1]
+            for(j in p0.x.toInt() until p2.x.toInt()) {
+                val y = doBezier(j.toFloat(), p0, p1, p2)
+                listPoints.add(PointF(j.toFloat(), y))
+            }
         }
         return listPoints
     }

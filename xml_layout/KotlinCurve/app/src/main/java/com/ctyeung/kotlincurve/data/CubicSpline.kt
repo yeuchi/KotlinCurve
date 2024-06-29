@@ -27,13 +27,7 @@ import android.graphics.PointF
 // 20Nov11		ported it to javascript, working in HTML5 canvas.			cty
 // 12Nov17      upgrade to ECMAScript6                                      cty
 // ============================================================================
-class CubicSpline {
-    /*
-     * TODO implement standard cubic spline
-     */
-
-    private val arraySrcX = ArrayList<Float>()
-    private val arraySrcY = ArrayList<Float>()
+class CubicSpline : BasePoints() {
 
     private var arrayB: FloatArray? = null
     private var arrayC: FloatArray? = null
@@ -45,8 +39,7 @@ class CubicSpline {
     private var arrayZ: FloatArray? = null
 
     fun clear() {
-        arraySrcX.clear()
-        arraySrcY.clear()
+        knots.clear()
 
         arrayB = null
         arrayC = null
@@ -69,55 +62,8 @@ class CubicSpline {
         arrayZ = FloatArray(size)
     }
 
-    private fun getNumKnots(): Int {
-        return arraySrcX.size
-    }
-
-    fun insert(p: PointF) {
-        when (getNumKnots()) {
-            0 -> {
-                arraySrcX.add(p.x)
-                arraySrcY.add(p.y)
-            }
-            1 -> {
-                if (p.x < arraySrcX[0]) {
-                    arraySrcX.add(0, p.x)
-                    arraySrcY.add(0, p.y)
-                } else {
-                    arraySrcX.add(p.x)
-                    arraySrcY.add(p.y)
-                }
-            }
-            else -> {
-                val index = bisection(p.x) + 1
-                arraySrcX.add(index, p.x)
-                arraySrcY.add(index, p.y)
-            }
-        }
-    }
-
-    /*
-     * bisection search to locate x-axis values for input
-     * - intended as a private method
-     */
-    private fun bisection(ab: Float): Int {                                               // x-axis value
-        var ju = arraySrcX.size                                                // upper limit
-        var jl = 0                                                                // lower limit
-        var jm: Int?                                                            // midpoint
-
-        while (ju - jl > 1) {
-            jm = (ju + jl) / 2                                    // midpoint formula
-
-            if (ab > arraySrcX[jm])
-                jl = jm
-            else
-                ju = jm
-        }
-        return jl
-    }
-
     fun formulate() {
-        val numKnots = arraySrcX.size
+        val numKnots = knots.size
         if (numKnots < 3)
             return
 
@@ -130,7 +76,7 @@ class CubicSpline {
         for (aa in 0 until numKnots - 1) {
             arrayH?.set(
                 aa,
-                (arraySrcX[aa + 1] - arraySrcX[aa])
+                (knots[aa + 1].x - knots[aa].x)
             ) // [A], Hj = Xj+1 - Xj
         }
 
@@ -138,8 +84,8 @@ class CubicSpline {
         for (aa in 1 until numKnots - 1) {
             // 0 -> n-1
             arraySIG?.set(
-                aa, (3F / arrayH!!.get(aa) * (arraySrcY.get(aa + 1) - arraySrcY.get(aa)) -
-                        3F / arrayH!!.get(aa - 1) * (arraySrcY.get(aa) - arraySrcY.get(aa - 1)))
+                aa, (3F / arrayH!![aa] * (knots[aa + 1].x - knots[aa].x) -
+                        3F / arrayH!![aa - 1] * (knots[aa].y - knots[aa - 1].y))
             )
         }
 
@@ -153,16 +99,15 @@ class CubicSpline {
         for (aa in 1 until numKnots - 1) {
             arrayL?.set(
                 aa,
-                (2F * (arraySrcX.get(aa + 1) - arraySrcX.get(aa - 1)))- (arrayH!!.get(aa - 1) * arrayU!!.get(
-                    aa - 1
-                ))
+                (2F * (knots[aa + 1].x - knots[aa - 1].x))- (arrayH!![aa - 1] * arrayU!![aa - 1])
             )
 
-            arrayU?.set(aa, arrayH!!.get(aa) / arrayL!!.get(aa))
+            arrayU?.set(aa, arrayH!![aa] / arrayL!![aa])
 
             arrayZ?.set(
                 aa,
-                (arraySIG!!.get(aa) - (arrayH!!.get(aa - 1) * arrayZ!!.get(aa - 1))) / arrayL!!.get(aa))
+                (arraySIG!![aa] - (arrayH!![aa - 1] * arrayZ!![aa - 1])) / arrayL!![aa]
+            )
         }
 
         // STEP 5		TAIL BOUNDARY @ 0
@@ -174,17 +119,17 @@ class CubicSpline {
         for (aa in numKnots - 2 downTo 0) {
             arrayC?.set(
                 aa,
-                arrayZ!!.get(aa) - arrayU!!.get(aa) * arrayC!!.get(aa + 1)
+                arrayZ!![aa] - arrayU!![aa] * arrayC!![aa + 1]
             ) // Theorem 3.11
 
             arrayB?.set(
-                aa, ((arraySrcY[aa + 1] - arraySrcY[aa]) / arrayH!!.get(aa)
-                        - (arrayH!!.get(aa) * (arrayC!!.get(aa + 1) + 2 * arrayC!!.get(aa)) / 3F))
+                aa, ((knots[aa + 1].y - knots[aa].y) / arrayH!![aa]
+                        - (arrayH!![aa] * (arrayC!![aa + 1] + 2 * arrayC!![aa]) / 3F))
             ) // eq. 10
 
             arrayD?.set(
                 aa,
-                (arrayC!!.get(aa + 1) - arrayC!!.get(aa)) / (3F * arrayH!!.get(aa))
+                (arrayC!![aa + 1] - arrayC!![aa]) / (3F * arrayH!![aa])
             ) // eq. 11
         }
     }
@@ -195,21 +140,21 @@ class CubicSpline {
     * WARNING: must have invoked formulate() before 
     * RETURN: -1 if invalid, positive value if ok.
     */
-    fun doCubicSpline(
+    private fun doCubicSpline(
         x: Float,                // [in] x value
         i: Int
     ): Float {            // [in] index of anchor to use
-        val Y = arraySrcY[i] +
-                arrayB?.get(i)!! * (x - arraySrcX[i]) +
-                arrayC?.get(i)!! * Math.pow((x - arraySrcX[i]).toDouble(), 2.0) +
-                arrayD?.get(i)!! * Math.pow((x - arraySrcX[i]).toDouble(), 3.0)
+        val Y = knots[i].y +
+                arrayB?.get(i)!! * (x - knots[i].x) +
+                arrayC?.get(i)!! * Math.pow((x - knots[i].x).toDouble(), 2.0) +
+                arrayD?.get(i)!! * Math.pow((x - knots[i].x).toDouble(), 3.0)
         return Y.toFloat()
     }
 
-    fun interpolateY(x: Float): Float {
+    private fun interpolateY(x: Float): Float {
         val index = bisection(x)
-        return if (arraySrcX[index] == x) {
-            arraySrcY[index]
+        return if (knots[index].x == x) {
+            knots[index].y
         } else {
             doCubicSpline(x, index)
         }
@@ -223,10 +168,10 @@ class CubicSpline {
         val numKnots = getNumKnots()
         return when (numKnots) {
             0 -> arrayListOf()
-            1 -> arrayListOf<PointF>(PointF(arraySrcX[0], arraySrcY[0]))
+            1 -> arrayListOf<PointF>(knots[0])
             2 -> arrayListOf<PointF>(
-                PointF(arraySrcX[0], arraySrcY[0]),
-                PointF(arraySrcX[1], arraySrcY[1])
+                knots[0],
+                knots[1]
             )
             else -> interpolateAll()
         }
@@ -237,8 +182,8 @@ class CubicSpline {
      */
     private fun interpolateAll(): ArrayList<PointF> {
         val listPoints = ArrayList<PointF>()
-        val start = arraySrcX[0].toInt() + 1
-        val end = arraySrcX.get(getNumKnots() - 1).toInt() - 1
+        val start = knots[0].x.toInt() + 1
+        val end = knots[getNumKnots() - 1].x.toInt() - 1
         for (i in start..end) {
             val y = interpolateY(i.toFloat())
             listPoints.add(PointF(i.toFloat(), y))

@@ -47,10 +47,7 @@ class MyPaperView(
 
             InterpolationEnum.CubicSpline -> {
                 cubicSpline.let { spline ->
-                    spline.clear()
-                    _knots.forEach {
-                        spline.insert(it)
-                    }
+                    spline.setKnots(_knots)
                     spline.formulate()
                     val points = spline.getPoints()
                     drawLine(canvas, points)
@@ -59,11 +56,7 @@ class MyPaperView(
 
             InterpolationEnum.BezierQuad -> {
                 bezierQuad.let { bezier ->
-                    bezier.clear()
-
-                    _knots.forEach {
-                        bezier.insert(it)
-                    }
+                    bezier.setKnots(_knots)
                     val points = bezier.getPoints()
                     drawLine(canvas, points)
                 }
