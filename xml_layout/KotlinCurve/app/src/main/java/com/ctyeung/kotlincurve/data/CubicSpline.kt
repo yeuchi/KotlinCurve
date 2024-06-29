@@ -232,6 +232,9 @@ class CubicSpline {
         }
     }
 
+    /**
+     * Assumption: 3 or more points
+     */
     private fun interpolateAll(): ArrayList<PointF> {
         val listPoints = ArrayList<PointF>()
         val start = arraySrcX[0].toInt() + 1
