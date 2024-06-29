@@ -89,7 +89,7 @@ class BezierQuad {
             val index = requant(bisection(i.toFloat()))
             val p0 = knots[index - 1]
 
-            /* calculate control point */
+            /* calculate control point or skip this if it is control point, not knot */
             val p1 = calculateControlPoint(index)
             val p2 = knots[index + 1]
 
