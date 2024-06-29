@@ -58,6 +58,7 @@ class BezierQuad :BasePoints() {
                 listPoints.add(PointF(j.toFloat(), y))
             }
         }
+        listPoints.add(knots[knots.size-1])
         return listPoints
     }
 
