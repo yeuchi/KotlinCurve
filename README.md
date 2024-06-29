@@ -29,6 +29,10 @@ Spline a popular curve smoothing alogrithm,<sup>[4]</sup> \
 Compose of 3 points with start and end anchoring knots; center is a control point. \
 <img width="420" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/aac78f28-aa0e-42b8-a47a-812ac19fac26">
 
+### Bezier Cubic (default)
+Compose of 4 points with start and end anchoring knots; center 2 are control points. \
+<img width="420" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/2c0f99f3-f7ac-4f8a-be8d-b264e834d98c">
+
 ### Bonus: text on curve
 So cool that Android SDK provides this feature right out of the box. \
 <img width="420" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/218b130b-75d4-4b50-94c3-71d73a4a641d">
