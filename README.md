@@ -25,6 +25,10 @@ Statistical median is a simple and effective filter for removing impulse (aka. S
 Spline a popular curve smoothing alogrithm,<sup>[4]</sup> \
 <img width="420" alt="Screen Shot 2024-05-29 at 5 20 54 PM" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/210c4db7-1b9b-4313-9fa2-07d8481ee9bc">
 
+### Bezier Quadratic
+Compose of 3 points with start and end anchoring knots; center is a control point. \
+<img width="420" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/aac78f28-aa0e-42b8-a47a-812ac19fac26".
+
 ### Bonus: text on curve
 So cool that Android SDK provides this feature right out of the box. \
 <img width="420" src="https://github.com/yeuchi/KotlinCurve/assets/1282659/218b130b-75d4-4b50-94c3-71d73a4a641d">
